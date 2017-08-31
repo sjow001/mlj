@@ -12,6 +12,7 @@ if($_GET['action'] == "code"){//获取验证码
 	$curl -> url = "http://vip8.sentree.com.cn/shair/vc";
 	echo $curl -> get_code();
 }else if($_GET['action'] == "login"){
+	$access_token = '670c27a802473c547c4262c66952de40';
 	$curl -> url = "https://saas.mljia.cn/customer/card/list?shop_sid=105471&card_flag=0&custom_id=706393&page=1&access_token=670c27a802473c547c4262c66952de40";
 	$rs = $curl -> curl();
 	echo "<pre>";
@@ -37,29 +38,26 @@ if($_GET['action'] == "code"){//获取验证码
 		echo 1;
 	}
 }else if($_GET['action'] == 'curlmember'){
+	$pages = 1;
+	$access_token = '670c27a802473c547c4262c66952de40';
 	$shopname = $_REQUEST['shopname'];
-	$data = '';
-
-    //获取总数
-    $curl -> url = "http://vip8.sentree.com.cn/shair/memberInfo!memberlist.action?set=cash";
-    $rs = $curl -> curl();
-    preg_match('/共(.*)条/isU', $rs, $totals);
-    $totals = isset($totals[1])?$totals[1]:100;
-    //总页数
-    $pages = ceil($totals/100);
+	$data = array();
 	for($i=1; $i<=$pages; $i++){
-		$params = "page.currNum=$i&page.rpp=100&set=cash";
-		$curl -> params = $params;
-		$curl -> url = "http://vip8.sentree.com.cn/shair/memberInfo!memberlist.action?set=cash";
-		$pagesData = $curl -> getMembersPage();
-		$data .= $curl ->getMembersInfo($pagesData, $i);
+		//获取员工列表
+		$curl -> url = "https://saas.mljia.cn/customer/info/list?shop_sid=105471&sex=&custom_type=0&day=&agent_type_flag=&start_date=&end_date=&custom_level_id=-1&custom_status=0&left_money_min=&left_money_max=&left_count_min=&left_count_max=&key_words=&note_words=&birthday_remind_flag=&phone_flag=&birthday_flag=&sort=customTotalMoney&sort_type=0&page=$i&access_token=$access_token";
+		$pagesData = $curl -> curl();
+		$pagesData = json_decode($pagesData,true);
+		$content =  base64_decode($pagesData['content']);
+		$content = json_decode($content,true);
+		foreach($content as $v){
+			$data[] = $v;
+		}
 	};
-
     if($data == '') {
         header('Location: index.php');
     }
 
-	$curl -> downMembersCvs($data, $shopname);
+	$curl -> downMembersCvs($data, $shopname, $access_token);
 }else if($_GET['action'] == 'curlpackage'){
     $shopname = $_REQUEST['shopname'];
     $data = '';

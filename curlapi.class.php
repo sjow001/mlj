@@ -194,166 +194,73 @@ class curlapi{
 		return $tables[1][0];
 	}
 
-    /**
-     * 获取会员信息下载到CVS
-     * @param $html
-     * @param $shopname
-     */
-	public function downMembersCvs($html,$shopname){
-		$rules = array(
-			//采集tr中的纯文本内容
-			'other' => array('tr','html'),
-		);
-		$newdata = array();
-		$data = QueryList::Query($html, $rules)->data;
+	/**
+	 * 获取会员信息下载到CVS
+	 * @param $html
+	 * @param $shopname
+	 */
+	public function downMembersCvs($data, $shopname, $access_token){
 		$k = 0;
 		foreach ($data as &$item) {
-			$other = explode('</td>', $item['other']);
-			if(count($other) > 15) {
-				//unset($other[0]);//去掉第一空白项
-                //unset($other[14]);//去掉14项
-                //unset($other[15]);//去掉15项
-                //unset($other[18]);//去掉15项
-				$item['other'] = $other;
+			//会员信息
+			$custom_id = $item['custom_id'];
+			$shop_sid = $item['SHOP_ID'];
+			$this -> url = "https://saas.mljia.cn/customer/info/get?custom_id=$custom_id&shop_sid=$shop_sid&access_token=$access_token";
+			$rs = $this -> curl();
+			$memberData = json_decode($rs,true);
+			$memberData =  base64_decode($memberData['content']);
+			$memberData = json_decode($memberData,true);
 
-				//有几个会员卡列表
-				$counts = count($other)-1-20;
-				$rows = $counts/10+1;
+			//会员卡信息
+			$this -> url = "https://saas.mljia.cn/customer/card/list?shop_sid=$shop_sid&card_flag=0&custom_id=$custom_id&page=1&access_token=$access_token";
+			$rs = $this -> curl();
+			$cardData = json_decode($rs,true);
+			$cardData =  base64_decode($cardData['content']);
+			$cardData = json_decode($cardData,true);
 
-				//积分
-				$k18 = 18+10*($rows-1);
-				preg_match_all('/value\=\"(.*)分\"/isU', $other[$k18], $jf);
-				$other[$k18] = isset($jf[1][0])?$jf[1][0]:0;
-
-				foreach ($other as &$v1) {
-					$v1 = strip_tags($v1);;
-					$v1 = preg_replace("/\s\n\t/","",$v1);
-					$v1 = str_replace(' ', '', $v1);
-					$v1= trim(str_replace(PHP_EOL, '', $v1));
-				}
-				ksort($other);
-
-
-				for($i=1; $i<=$rows; $i++) {
-                    //卡号
-                    $k0 = 6+10*($i-1);
-					$newdata[$k][0] = "\t".$other[$k0]; //卡号
-					$newdata[$k][1] = $other[2]; //姓名
-					$newdata[$k][2] = $other[1]; //手机号
-					$newdata[$k][3] = $other[3] == '男'?0:1; //性别
+			if(isset($data[0]) && count($data[0]) > 0){
+				foreach($cardData as $card){
+					$card = $card;
+					//卡号
+					$other = $item;
+					$newdata[$k][0] = "\t".$other['custom_member_id']; //卡号
+					$newdata[$k][1] = str_replace($other['custom_member_id'], '', $other['custom_name']); //姓名
+					$newdata[$k][2] = $other['custom_mobile']; //手机号
+					$newdata[$k][3] = $other['custom_sex']; //性别
 
 					//卡类型
-					$k7 = 7+10*($i-1);
-					$newdata[$k][4] = $other[$k7]; //卡类型
+					$newdata[$k][4] = $card['card_name']; //卡类型
 
-					$newdata[$k][5] = $other[9]; //折扣
+					$newdata[$k][5] = '10'; //折扣
 
-					//卡金余额(必填),疗程,
-					$newdata[$k][6] = 0; //卡金余额
-					$newdata[$k][7] = 0; //充值总额
-					$newdata[$k][9] = 0; //消费总额
-					$newdata[$k][10] = 0; //赠送金
+					//卡金余额信息,
+					$newdata[$k][6] = $card[0]['card_left_money']; //卡余额
+					$newdata[$k][12] = 0; //欠款
+					$newdata[$k][7] = $other['custom_total_money']; //充值总额
+					$newdata[$k][9] = '0'; //消费总额
+					$newdata[$k][10] = $card[0]['left_given_money'];; //赠送金
+					$newdata[$k][8] = 0; //消费次数
+					$newdata[$k][11] = 0; //积分
+					$newdata[$k][13] = $card['card_open_date']; //开卡时间
 
-					//卡金余额
-					$k6 = 12+10*($i-1);
-					preg_match_all('/(.*)元/isU', $other[$k6], $data1);
-					if(isset($data1[1]) && count($data1[1]) == 2) {
-						$newdata[$k][6] = str_replace('元:', '', $data1[1][0]);
-						$newdata[$k][6] = str_replace('余:次:', '', $data1[1][0]);
-						//$newdata[$k][7] = str_replace('疗程:', '', $data1[1][1]);
-					} else {
-						$newdata[$k][6] = str_replace('元', '', $other[$k6]);
-						$newdata[$k][6] = str_replace('余:次', '', $other[$k6]);
-						//$newdata[$k][7] = 0;
-					}
-
-					//充值总额
-					$k7 = 10+10*($i-1);
-					$newdata[$k][7] += str_replace('元', '', $other[$k7]); //充值总额
-
-					//消费总额
-					$k11 = 11+10*($i-1);
-					$newdata[$k][9] += str_replace('元', '', $other[$k11]); //消费总额
-
-					//赠送金
-					$k13 = 13+10*($i-1);
-					$newdata[$k][10] += str_replace('元', '', $other[$k13]); //赠送金
-
-					$k17 = 17+10*($rows-1);
-					$newdata[$k][8] = str_replace('次', '', $other[$k17]); //消费次数
-
-					$newdata[$k][11] = $other[$k18]; //积分
-
-					$newdata[$k][12] = 0; //开卡时间
-
-					//日期格式转换
-					$date1 = substr($other[5], 0, 3).' '.substr($other[5], 3, 3).' '.substr($other[5], 19, 4);
-					$date1 = date('Y-m-d', strtotime($date1));
-
-					$k19 = 19+10*($rows-1);
-					$date2 = substr($other[$k19], 0, 3).' '.substr($other[$k19], 3, 3).' '.substr($other[$k19], 19, 4);
-
-					$date2 = date('Y-m-d', strtotime($date2));
-					$newdata[$k][13] = $date1; //最后消费时间
-					$newdata[$k][14] = $date2 == '1970-01-01'?$date1:$date2; //生日
-					$newdata[$k][15] = ''; //会员备注
+					$newdata[$k][14] = ''; //最后消费时间
+					$newdata[$k][15] = $memberData['birthday']; //生日
+					$newdata[$k][16] = $memberData['birthday_remind_flag']=='1'?1:0; //生日类型（1阳历 公里，0阴历 农历）
+					$newdata[$k][17] = $memberData['note']; //会员备注
 					ksort($newdata[$k]);
-					$k = $k+$i;
+					$k++;
 				}
-				/*
-				if(preg_match('/余/isU', $newdata[$k][6])) {
-					$tmp = explode('余', $newdata[$k][6]);
-					$newdata[$k][6] = $tmp[0];
-				}
-				*/
-				$k++;
 			}
+			$k++;
 		}
-
+		
 		//导出CVS
-		$cvsstr = "卡号(必填[唯一]),姓名(必填),手机号(必填[唯一]),性别(必填[“0”代表男，“1”代表女]),卡类型(必填[系统编号]),折扣(必填),卡金余额(必填),充值总额,消费次数,消费总额,赠送金,积分,欠款,开卡时间(格式：YYYY-mm-dd),最后消费时间(格式：YYYY-mm-dd),生日(格式：YYYY-mm-dd),会员备注\n";
+		$cvsstr = "卡号(必填[唯一]),姓名(必填),手机号(必填[唯一]),性别(必填[“0”代表男，“1”代表女]),卡类型(必填[系统编号]),折扣(必填),卡金余额(必填),充值总额,消费次数,消费总额,赠送金,积分,欠款,开卡时间(格式：YYYY-mm-dd),最后消费时间(格式：YYYY-mm-dd),生日(格式：YYYY-mm-dd),生日类型（1阳历，0阴历）,会员备注\n";
 		$filename = $shopname.'_会员信息.csv';
 		$cvsstr = iconv('utf-8','gb2312//ignore',$cvsstr);
 
 		foreach($newdata as &$v){
-			//获取会员备注和欠款
-			$keyword = trim($v[0]);
-			$this -> url = "http://vip8.sentree.com.cn/shair/consumerHelp!find.action?searchType=1&keyType=1&keyword=$keyword";
-			$rs = $this -> curl();
-
-			//会员备注
-			$rules = array(
-				'mark' => array('textarea','html'),
-			);
-			$mark = QueryList::Query($rs, $rules)->data;
-			$v[16] = $mark[0]['mark'];
-			//欠款
-			$debt = 0;
-			$rules = array(
-				'debt' => array('.table_list tr','html'),
-			);
-			$debtHtml = QueryList::Query($rs, $rules)->data;
-			foreach ($debtHtml as $dk => $dv){
-				if($dk > 0){
-					$debtTmp = explode('</td>', $dv['debt']);
-					foreach ($debtTmp as &$v1) {
-						$v1 = strip_tags($v1);;
-						$v1 = preg_replace("/\s\n\t/","",$v1);
-						$v1 = str_replace(' ', '', $v1);
-						$v1= trim(str_replace(PHP_EOL, '', $v1));
-					}
-					if($debtTmp[4] == '未还清' || strpos($debtTmp[4], '未还清')>=0) {
-						$debt += $debtTmp[2];
-					}
-				}
-			}
-			$v[12] = $debt;
-
 			foreach($v as $k=>&$v1){
-				//时间转换
-				if($k == 5 || $k == 19) {
-					//$v1 = strtotime($v1);
-				}
 				//转码
 				$cvsdata = iconv('utf-8','gb2312//ignore',$v1);
 				$cvsstr .= $cvsdata; //用引文逗号分开
@@ -370,7 +277,6 @@ class curlapi{
 		header('Pragma:public');
 		echo $cvsstr;
 	}
-
 	/*
 	curl模拟采集数据，会员套餐数据
 	*/
