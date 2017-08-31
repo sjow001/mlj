@@ -38,13 +38,14 @@ if($_GET['action'] == "code"){//获取验证码
 		echo 1;
 	}
 }else if($_GET['action'] == 'curlmember'){
-	$pages = 1;
+	$pages = 4;
 	$access_token = '670c27a802473c547c4262c66952de40';
-	$shopname = $_REQUEST['shopname'];
+	$shopname = '超人气美业';
+	$shop_sid = 103378;
 	$data = array();
 	for($i=1; $i<=$pages; $i++){
 		//获取员工列表
-		$curl -> url = "https://saas.mljia.cn/customer/info/list?shop_sid=105471&sex=&custom_type=0&day=&agent_type_flag=&start_date=&end_date=&custom_level_id=-1&custom_status=0&left_money_min=&left_money_max=&left_count_min=&left_count_max=&key_words=&note_words=&birthday_remind_flag=&phone_flag=&birthday_flag=&sort=customTotalMoney&sort_type=0&page=$i&access_token=$access_token";
+		$curl -> url = "https://saas.mljia.cn/customer/info/list?shop_sid=$shop_sid&sex=&custom_type=0&day=&agent_type_flag=&start_date=&end_date=&custom_level_id=-1&custom_status=0&left_money_min=&left_money_max=&left_count_min=&left_count_max=&key_words=&note_words=&birthday_remind_flag=&phone_flag=&birthday_flag=&sort=customTotalMoney&sort_type=0&page=$i&access_token=$access_token";
 		$pagesData = $curl -> curl();
 		$pagesData = json_decode($pagesData,true);
 		$content =  base64_decode($pagesData['content']);
