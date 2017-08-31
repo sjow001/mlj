@@ -234,11 +234,11 @@ class curlapi{
 					$newdata[$k][5] = '10'; //折扣
 
 					//卡金余额信息,
-					$newdata[$k][6] = $card[0]['card_left_money']; //卡余额
+					$newdata[$k][6] = $card['card_info_list'][0]['left_given_money']; //卡余额
 					$newdata[$k][12] = 0; //欠款
 					$newdata[$k][7] = $other['custom_total_money']; //充值总额
 					$newdata[$k][9] = '0'; //消费总额
-					$newdata[$k][10] = $card[0]['left_given_money'];; //赠送金
+					$newdata[$k][10] = $card['card_info_list'][0]['left_given_money']; //赠送金
 					$newdata[$k][8] = 0; //消费次数
 					$newdata[$k][11] = 0; //积分
 					$newdata[$k][13] = $card['card_open_date']; //开卡时间
@@ -253,7 +253,7 @@ class curlapi{
 			}
 			$k++;
 		}
-		
+
 		//导出CVS
 		$cvsstr = "卡号(必填[唯一]),姓名(必填),手机号(必填[唯一]),性别(必填[“0”代表男，“1”代表女]),卡类型(必填[系统编号]),折扣(必填),卡金余额(必填),充值总额,消费次数,消费总额,赠送金,积分,欠款,开卡时间(格式：YYYY-mm-dd),最后消费时间(格式：YYYY-mm-dd),生日(格式：YYYY-mm-dd),生日类型（1阳历，0阴历）,会员备注\n";
 		$filename = $shopname.'_会员信息.csv';
