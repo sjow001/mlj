@@ -114,6 +114,7 @@ class curlapi{
 	*/
 	public function curl(){
 		session_start();
+		$cacert = getcwd() . '/cacert.pem'; //CA根证书
 		$ch=curl_init();
 		curl_setopt($ch, CURLOPT_URL,$this -> url);
 		curl_setopt($ch, CURLOPT_HEADER,0);
@@ -121,6 +122,9 @@ class curlapi{
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch,CURLOPT_COOKIE,$_SESSION['cookies']);
 		curl_setopt ($ch, CURLOPT_REFERER,$this -> referer);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);   // 只信任CA颁布的证书
+		curl_setopt($ch, CURLOPT_CAINFO, $cacert); // CA根证书（用来验证的网站证书是否是CA颁布）
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // 检查证书中是否设置域名，并且是否与提供的主机名匹配
 		$result=curl_exec($ch);
 		curl_close($ch);
 		return $result;
@@ -131,6 +135,7 @@ class curlapi{
 	*/
 	public function getMembersPage(){
 		session_start();
+		$cacert = getcwd() . '/cacert.pem'; //CA根证书
 		$ch=curl_init();
 		curl_setopt($ch, CURLOPT_URL,$this -> url);
 		curl_setopt($ch, CURLOPT_HEADER,0);
@@ -141,6 +146,9 @@ class curlapi{
 		curl_setopt($ch,CURLOPT_POSTFIELDS,$this -> params);
 		curl_setopt ($ch, CURLOPT_REFERER,$this -> url);
 		curl_setopt ($ch, CURLOPT_REFERER,$this -> referer);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);   // 只信任CA颁布的证书
+		curl_setopt($ch, CURLOPT_CAINFO, $cacert); // CA根证书（用来验证的网站证书是否是CA颁布）
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // 检查证书中是否设置域名，并且是否与提供的主机名匹配
 		$result=curl_exec($ch);
 		curl_close($ch);
 		return $result;

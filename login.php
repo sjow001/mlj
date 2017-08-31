@@ -12,6 +12,13 @@ if($_GET['action'] == "code"){//获取验证码
 	$curl -> url = "http://vip8.sentree.com.cn/shair/vc";
 	echo $curl -> get_code();
 }else if($_GET['action'] == "login"){
+	$curl -> url = "https://saas.mljia.cn/customer/card/list?shop_sid=105471&card_flag=0&custom_id=706393&page=1&access_token=670c27a802473c547c4262c66952de40";
+	$rs = $curl -> curl();
+	echo "<pre>";
+	print_r($rs);
+	echo "</pre>";
+	exit;
+
 	$login = urlencode($_POST['login']);
 	$passwd = $_POST['passwd'];
 	$rand = $_POST['rand'];
