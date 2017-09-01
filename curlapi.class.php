@@ -217,8 +217,7 @@ class curlapi{
 			$cardData = json_decode($rs,true);
 			$cardData =  base64_decode($cardData['content']);
 			$cardData = json_decode($cardData,true);
-
-			if(isset($data[0]) && count($data[0]) > 0){
+			if(isset($cardData[0]) && count($cardData[0]) > 0){
 				foreach($cardData as $card){
 					$card = $card;
 					//卡号
@@ -234,7 +233,7 @@ class curlapi{
 					$newdata[$k][5] = '10'; //折扣
 
 					//卡金余额信息,
-					$newdata[$k][6] = $card['card_info_list'][0]['left_given_money']; //卡余额
+					$newdata[$k][6] = $card['card_info_list'][0]['left_not_given_money']; //卡余额
 					$newdata[$k][12] = 0; //欠款
 					$newdata[$k][7] = $other['custom_total_money']; //充值总额
 					$newdata[$k][9] = '0'; //消费总额
@@ -250,6 +249,34 @@ class curlapi{
 					ksort($newdata[$k]);
 					$k++;
 				}
+			} else {
+				$other = $item;
+				$newdata[$k][0] = "\t".$other['custom_member_id']; //卡号
+				$newdata[$k][1] = str_replace($other['custom_member_id'], '', $other['custom_name']); //姓名
+				$newdata[$k][2] = $other['custom_mobile']; //手机号
+				$newdata[$k][3] = $other['custom_sex']; //性别
+
+				//卡类型
+				$newdata[$k][4] = ''; //卡类型
+
+				$newdata[$k][5] = '10'; //折扣
+
+				//卡金余额信息,
+				$newdata[$k][6] = 0; //卡余额
+				$newdata[$k][12] = 0; //欠款
+				$newdata[$k][7] = $other['custom_total_money']; //充值总额
+				$newdata[$k][9] =  0; //消费总额
+				$newdata[$k][10] = 0; //赠送金
+				$newdata[$k][8] = 0; //消费次数
+				$newdata[$k][11] = 0; //积分
+				$newdata[$k][13] = ''; //开卡时间
+
+				$newdata[$k][14] = ''; //最后消费时间
+				$newdata[$k][15] = $memberData['birthday']; //生日
+				$newdata[$k][16] = $memberData['birthday_remind_flag']=='1'?1:0; //生日类型（1阳历 公里，0阴历 农历）
+				$newdata[$k][17] = $memberData['note']; //会员备注
+				ksort($newdata[$k]);
+				$k++;
 			}
 			$k++;
 		}
