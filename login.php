@@ -38,10 +38,10 @@ if($_GET['action'] == "code"){//获取验证码
 		echo 1;
 	}
 }else if($_GET['action'] == 'curlmember'){
-	$pages = 4;
-	$access_token = '670c27a802473c547c4262c66952de40';
-	$shopname = '超人气美业';
-	$shop_sid = 103378;
+	$pages = 38;
+	$access_token = 'b86094ef923e3c81e4924b1ff011d1da';
+	$shopname = '超人气';
+	$shop_sid = 111044;
 	$data = array();
 	for($i=1; $i<=$pages; $i++){
 		//获取员工列表
