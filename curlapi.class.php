@@ -205,14 +205,14 @@ class curlapi{
 			//会员信息
 			$custom_id = $item['custom_id'];
 			$shop_sid = $item['SHOP_ID'];
-			$this -> url = "https://saas.mljia.cn/customer/info/get?custom_id=$custom_id&shop_sid=$shop_sid&access_token=$access_token";
+			$this -> url = "https://o2o.mljia.cn/customer/info/get?custom_id=$custom_id&shop_sid=$shop_sid&access_token=$access_token";
 			$rs = $this -> curl();
 			$memberData = json_decode($rs,true);
 			$memberData =  base64_decode($memberData['content']);
 			$memberData = json_decode($memberData,true);
 
 			//会员卡信息
-			$this -> url = "https://saas.mljia.cn/customer/card/list?shop_sid=$shop_sid&card_flag=0&custom_id=$custom_id&page=1&access_token=$access_token";
+			$this -> url = "https://o2o.mljia.cn/customer/card/list?shop_sid=$shop_sid&card_flag=0&custom_id=$custom_id&page=1&access_token=$access_token";
 			$rs = $this -> curl();
 			$cardData = json_decode($rs,true);
 			$cardData =  base64_decode($cardData['content']);

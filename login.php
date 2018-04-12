@@ -38,14 +38,14 @@ if($_GET['action'] == "code"){//获取验证码
 		echo 1;
 	}
 }else if($_GET['action'] == 'curlmember'){
-	$pages = 38;
-	$access_token = 'b86094ef923e3c81e4924b1ff011d1da';
-	$shopname = '超人气';
-	$shop_sid = 111044;
+	$pages = 27;
+	$access_token = 'd5b40b123bf42dfb7c282f97bd0af21e';
+	$shopname = '原聚造型美研馆';
+	$shop_sid = 123603;
 	$data = array();
 	for($i=1; $i<=$pages; $i++){
 		//获取员工列表
-		$curl -> url = "https://saas.mljia.cn/customer/info/list?shop_sid=$shop_sid&sex=&custom_type=0&day=&agent_type_flag=&start_date=&end_date=&custom_level_id=-1&custom_status=0&left_money_min=&left_money_max=&left_count_min=&left_count_max=&key_words=&note_words=&birthday_remind_flag=&phone_flag=&birthday_flag=&sort=customTotalMoney&sort_type=0&page=$i&access_token=$access_token";
+		$curl -> url = "https://saas.mljia.cn/customer/info/list?shop_sid=$shop_sid&sex=&custom_type=0&day=&agent_type_flag=&start_date=&end_date=&custom_level_id=-1&custom_status=0&left_money_min=&left_money_max=&left_count_min=&left_count_max=&key_words=&note_words=&birthday_remind_flag=&phone_flag=&birthday_flag=&custom_channel=&sort=customTotalMoney&sort_type=0&page=$pages&access_token=$access_token";
 		$pagesData = $curl -> curl();
 		$pagesData = json_decode($pagesData,true);
 		$content =  base64_decode($pagesData['content']);
@@ -57,7 +57,6 @@ if($_GET['action'] == "code"){//获取验证码
     if($data == '') {
         header('Location: index.php');
     }
-
 	$curl -> downMembersCvs($data, $shopname, $access_token);
 }else if($_GET['action'] == 'curlpackage'){
     $shopname = $_REQUEST['shopname'];
