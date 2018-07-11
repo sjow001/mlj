@@ -441,15 +441,16 @@ class curlapi{
      * @param $shopname
      */
     public function downPackageCvsNew($data, $shopname, $access_token){
+        $newdata = array();
         foreach ($data as &$item) {
             //会员信息
             $custom_id = $item['custom_id'];
             $shop_sid = $item['SHOP_ID'];
-            // $this -> url = "https://saas.mljia.cn/customer/info/get?custom_id=$custom_id&shop_sid=$shop_sid&access_token=$access_token";
-            // $rs = $this -> curl();
-            // $memberData = json_decode($rs,true);
-            // $memberData =  base64_decode($memberData['content']);
-            // $memberData = json_decode($memberData,true);
+            $this -> url = "https://saas.mljia.cn/customer/info/get?custom_id=$custom_id&shop_sid=$shop_sid&access_token=$access_token";
+            $rs = $this -> curl();
+            $memberData = json_decode($rs,true);
+            $memberData =  base64_decode($memberData['content']);
+            $memberData = json_decode($memberData,true);
 
             //会员卡信息
             $this -> url = "https://saas.mljia.cn/customer/card/list?shop_sid=$shop_sid&card_flag=0&custom_id=$custom_id&page=1&access_token=$access_token";
@@ -458,7 +459,6 @@ class curlapi{
             $cardData =  base64_decode($cardData['content']);
             $cardData = json_decode($cardData,true);
 
-            $newdata = array();
             if(isset($cardData[0]) && count($cardData[0]) > 0){
                 foreach($cardData as $card){
                     if( isset($card['card_info_list'][0]['item_left_num']) && isset($card['card_info_list'][0]['item_total_num']) ) {
@@ -466,6 +466,10 @@ class curlapi{
 
                         $item_total_num = $card['card_info_list'][0]['item_total_num'];//总次数
                         $item_left_num = $card['card_info_list'][0]['item_left_num'];//剩余次数
+                        if($item_total_num == -1){
+                            $item_total_num = 9999;//总次数
+                            $item_left_num = 9999;//剩余次数
+                        }
 
                         $newA[0] = $other['custom_mobile']; //手机号
                         $newA[1] = "\t".$other['custom_member_id']; //卡号
@@ -477,7 +481,7 @@ class curlapi{
                         $newA[6] = $card['card_name'];//项目名称
                         $newA[7] = $item_total_num;//总次数
                         $newA[8] = $item_left_num;//剩余次数
-                        $newA[9] = $card['card_price']/$item_total_num; //单次消费金额
+                        $newA[9] = ceil($card['card_price']/$item_total_num); //单次消费金额
                         $newA[10] = $item_left_num*$newA[9]; //剩余金额
                         $newA[11] = '永久有效';//失效日期
 
@@ -485,12 +489,10 @@ class curlapi{
                         $newA[13] = $newA[10]; //总剩余金额
                         $newA[14] = $other[8];
                         $newdata[] = $newA;
-
                     }
                 }
             }
         }
-
         //导出CVS
         $cvsstr = "手机号,卡号,姓名,卡名称,卡类型,项目编号,项目名称,总次数,剩余次数,单次消费金额,剩余金额,失效日期,总剩余次数,总剩余金额\n";
         $filename = $shopname.'_会员次卡信息.csv';
