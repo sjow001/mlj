@@ -477,13 +477,13 @@ class curlapi{
                         $newA[3] = $card['card_name']; //卡名称
                         $newA[4] = $card['card_name']; //卡类型
 
-                        $newA[5] = $card['card_name'];//项目编号
-                        $newA[6] = $card['card_name'];//项目名称
+                        $newA[5] = $card['card_info_list'][0]['item_name'];//项目编号
+                        $newA[6] = $card['card_info_list'][0]['item_name'];//项目名称
                         $newA[7] = $item_total_num;//总次数
                         $newA[8] = $item_left_num;//剩余次数
                         $newA[9] = ceil($card['card_price']/$item_total_num); //单次消费金额
                         $newA[10] = $item_left_num*$newA[9]; //剩余金额
-                        $newA[11] = '永久有效';//失效日期
+                        $newA[11] = $card['card_end_date'];//失效日期
 
                         $newA[12] = $newA[8];//总剩余次数
                         $newA[13] = $newA[10]; //总剩余金额
