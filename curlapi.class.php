@@ -247,6 +247,7 @@ class curlapi{
                     $newdata[$k][15] = $memberData['birthday']; //生日
                     $newdata[$k][16] = $memberData['birthday_remind_flag']=='1'?1:0; //生日类型（1阳历 公里，0阴历 农历）
                     $newdata[$k][17] = $memberData['note']; //会员备注
+                    $newdata[$k][17] = preg_replace("/\s/","", $newdata[$k][17]);
                     ksort($newdata[$k]);
                     $k++;
                 }
@@ -276,6 +277,7 @@ class curlapi{
                 $newdata[$k][15] = $memberData['birthday']; //生日
                 $newdata[$k][16] = $memberData['birthday_remind_flag']=='1'?1:0; //生日类型（1阳历 公里，0阴历 农历）
                 $newdata[$k][17] = $memberData['note']; //会员备注
+                $newdata[$k][17] = preg_replace("/\s/","", $newdata[$k][17]);
                 ksort($newdata[$k]);
                 $k++;
             }
