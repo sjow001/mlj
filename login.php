@@ -41,11 +41,11 @@ if($_GET['action'] == "code"){//获取验证码
     }
 }else if($_GET['action'] == 'curlmember'){
     $pages = 120;
-    $access_token = 'f8a8d8d808f4dec46aff5dbfb6efd5e6';
+    $access_token = '3d5edb82d762b1791ccc4bcfa862d85a';
     $shopname = '巨匠美发涉外西门店';
     $shop_sid = 110885;
     $data = array();
-    for($i=36; $i<=44; $i++){
+    for($i=31; $i<=44; $i++){
         //获取员工列表
         $curl -> url = "https://saas.mljia.cn/customer/info/list?shop_sid=$shop_sid&sex=&custom_type=0&day=&agent_type_flag=&start_date=&end_date=&custom_level_id=-1&custom_status=0&left_money_min=&left_money_max=&left_count_min=&left_count_max=&key_words=&note_words=&birthday_remind_flag=&phone_flag=&birthday_flag=&custom_channel=&create_start_date=&create_end_date=&sort=customTotalMoney&sort_type=0&page=$i&access_token=$access_token";
         $pagesData = $curl -> curl();
@@ -62,11 +62,11 @@ if($_GET['action'] == "code"){//获取验证码
     $curl -> downMembersCvs($data, $shopname, $access_token);
 }else if($_GET['action'] == 'curlpackage'){
     $pages = 14;
-    $access_token = 'f8a8d8d808f4dec46aff5dbfb6efd5e6';
+    $access_token = '3d5edb82d762b1791ccc4bcfa862d85a';
     $shopname = '巨匠美发涉外西门店';
     $shop_sid = 110885;
     $data = array();
-    for($i=36; $i<=44; $i++){
+    for($i=31; $i<=44; $i++){
         //获取员工列表
         $curl -> url = "https://saas.mljia.cn/customer/info/list?shop_sid=$shop_sid&sex=&custom_type=0&day=&agent_type_flag=&start_date=&end_date=&custom_level_id=-1&custom_status=0&left_money_min=&left_money_max=&left_count_min=&left_count_max=&key_words=&note_words=&birthday_remind_flag=&phone_flag=&birthday_flag=&custom_channel=&create_start_date=&create_end_date=&sort=customTotalMoney&sort_type=0&page=$i&access_token=$access_token";
         $pagesData = $curl -> curl();
