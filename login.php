@@ -40,12 +40,12 @@ if($_GET['action'] == "code"){//获取验证码
         echo 1;
     }
 }else if($_GET['action'] == 'curlmember'){
-    $pages = 120;
-    $access_token = 'a3700854f29d36a32879eca51652ecb3';
-    $shopname = '名派世家形象设计连锁机构';
-    $shop_sid = 127051;
+    $pages = 64;
+    $access_token = '3a02cfdb05cf4e2af9b52ea6260918bd';
+    $shopname = '13828808178';
+    $shop_sid = 115395;
     $data = array();
-    for($i=1; $i<=7; $i++){
+    for($i=1; $i<=$pages; $i++){
         //获取员工列表
         $curl -> url = "https://saas.mljia.cn/customer/info/list?shop_sid=$shop_sid&sex=&custom_type=0&day=&agent_type_flag=&start_date=&end_date=&custom_level_id=-1&custom_status=0&left_money_min=&left_money_max=&left_count_min=&left_count_max=&key_words=&note_words=&birthday_remind_flag=&phone_flag=&birthday_flag=&custom_channel=&create_start_date=&create_end_date=&sort=customTotalMoney&sort_type=0&page=$i&access_token=$access_token";
         $pagesData = $curl -> curl();
@@ -61,12 +61,12 @@ if($_GET['action'] == "code"){//获取验证码
     }
     $curl -> downMembersCvs($data, $shopname, $access_token);
 }else if($_GET['action'] == 'curlpackage'){
-    $pages = 14;
-    $access_token = 'a3700854f29d36a32879eca51652ecb3';
-    $shopname = '名派世家形象设计连锁机构';
-    $shop_sid = 127051;
+    $pages = 64;
+    $access_token = '3a02cfdb05cf4e2af9b52ea6260918bd';
+    $shopname = '13828808178';
+    $shop_sid = 115395;
     $data = array();
-    for($i=1; $i<=7; $i++){
+    for($i=1; $i<=$pages; $i++){
         //获取员工列表
         $curl -> url = "https://saas.mljia.cn/customer/info/list?shop_sid=$shop_sid&sex=&custom_type=0&day=&agent_type_flag=&start_date=&end_date=&custom_level_id=-1&custom_status=0&left_money_min=&left_money_max=&left_count_min=&left_count_max=&key_words=&note_words=&birthday_remind_flag=&phone_flag=&birthday_flag=&custom_channel=&create_start_date=&create_end_date=&sort=customTotalMoney&sort_type=0&page=$i&access_token=$access_token";
         $pagesData = $curl -> curl();
